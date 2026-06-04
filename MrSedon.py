@@ -22,7 +22,7 @@ class Sedon:
         self.is_jumping = False
         self.sedon_force = 0
 
-    def update_health(self, health):
+    def updateHealth(self, health):
         self.sedon_health += health
 
     def update_ammo(self, ammo):
@@ -69,3 +69,6 @@ class Sedon:
 
     def get_force(self):
         return self.sedon_force
+
+    def set_position(self, cords):
+        self.sedon_position = Vector2(cords[0], cords[1])
