@@ -19,6 +19,8 @@ score = 0
 hasRuler = True
 rulerCooldown = 120 - (score * 2)
 
+rulerWhack = pygame.mixer.Sound("Audio\Whack.mp3")
+
 pygame.mixer.music.load(r"Audio\MenuTheme.mp3")
 pygame.mixer.music.play(loops=-1)
 
@@ -105,6 +107,7 @@ def updateKiggles(list_of_opps):
 
         if abs(distanceFromOppX) + abs(distanceFromOppY) < 150:
             endGame()
+            return
 
         if distanceFromOppX >= 0:
             opp.setPosition(Vector2(opp.getPosition()[0] - (1 * (((score + 1) / 20) + 1)), opp.getPosition()[1]))
@@ -201,7 +204,7 @@ def update_frame(gameHasStarted):
         screen.blit(scoreText, score_rect)
 
         update_sedon(hasRuler)
-        updateKiggles(list_of_opps)
+
         if random.randint(1, math.floor(180  /  (1 + (score / 20)))) == 1:
             spawn_Kiggle()
         for platform in list_of_platforms:
@@ -214,6 +217,7 @@ def update_frame(gameHasStarted):
                     list_of_opps.remove(opp)
                     list_of_rulers.remove(ruler)
                     score += 1
+                    rulerWhack.play()
                     break
 
             ruler_image = pygame.image.load(r"Images\SedonRuler.png").convert_alpha()
@@ -222,6 +226,8 @@ def update_frame(gameHasStarted):
             screen.blit(ruler_rotated, ruler_box)
 
             ruler.setPosition(Vector2(ruler.getPosition()[0] - (math.cos(ruler.getAngle()) * 10), ruler.getPosition()[1] + (math.sin(ruler.getAngle()) * 10)))
+
+        updateKiggles(list_of_opps)
 
 
 while running:
