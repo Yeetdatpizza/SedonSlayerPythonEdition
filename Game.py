@@ -1,7 +1,4 @@
 import random
-
-from markdown_it import ruler
-
 from Kiggle import Kiggle
 from MrSedon import *
 import pygame
@@ -10,8 +7,9 @@ from Platform import *
 from Ruler import *
 
 pygame.init()
-#screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
-screen = pygame.display.set_mode((1080, 800))
+pygame.mixer.init()
+screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.SCALED)
+#screen = pygame.display.set_mode((1080, 800))
 pygame.display.set_caption('Sedon Slayer: Python Edition')
 image = pygame.image.load(r"Images\SedonSlayerLogo.png")
 pygame.display.set_icon(image)
@@ -20,6 +18,9 @@ running = True
 score = 0
 hasRuler = True
 rulerCooldown = 120 - (score * 2)
+
+pygame.mixer.music.load(r"Audio\MenuTheme.mp3")
+pygame.mixer.music.play(loops=-1)
 
 
 
@@ -64,6 +65,11 @@ def spawn_Kiggle():
     #list_of_opps.append(Kiggle(Vector2(sedon.get_position().x, sedon.get_position().y)))
 
 def endGame():
+
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load(r"Audio\LoseTheme.mp3")
+    pygame.mixer.music.play(loops=-1)
+
     global gameHasStarted
     gameHasStarted = False
 
@@ -224,6 +230,9 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             if not gameHasStarted:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(r"Audio\GameTheme.mp3")
+                pygame.mixer.music.play(loops=-1)
                 gameHasStarted = True
 
                 ground = Platform(Vector2(screen.get_width() / 2, (screen.get_height() / 12) * 11), Vector2(screen.get_width() * 100, screen.get_height() / 6))
@@ -256,6 +265,10 @@ while running:
 
                     newRuler = Ruler(ruler_angle, Vector2(ruler_box.center[0], ruler_box.center[1]))
                     list_of_rulers.append(newRuler)
+
+            if event.key == pygame.K_ESCAPE:
+                running = False
+                pygame.quit()
 
     update_frame(gameHasStarted)
 
