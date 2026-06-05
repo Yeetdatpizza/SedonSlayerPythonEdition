@@ -1,3 +1,9 @@
+"""
+Contains the MrSedon class
+Has mutator and accesser functions that can be used when needed
+Probably the most complicated class here, as player controls require a lot of functions
+"""
+
 import pygame
 from pygame import Vector2
 

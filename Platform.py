@@ -1,3 +1,9 @@
+"""
+Contains the Platform class
+Has mutator and accesser functions that can be used when needed
+THe platform is the ground essentially 
+"""
+
 import pygame
 
 class Platform:

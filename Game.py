@@ -1,3 +1,9 @@
+"""
+This is the main runner file for the game
+It handles all of the math and other logic
+Basically connects everything together so it all works properly
+"""
+
 import random
 from Kiggle import Kiggle
 from MrSedon import *
@@ -63,7 +69,7 @@ list_of_rulers = []
 def spawn_Kiggle():
     newOpp = Kiggle(Vector2(random.randint(int (sedon.get_position().x - 4000), int (sedon.get_position().x + 4000)), 0), random.choice(kiggles))
     list_of_opps.append(newOpp)
-    print(newOpp.getPosition(), sedon.get_position())
+    
     #list_of_opps.append(Kiggle(Vector2(sedon.get_position().x, sedon.get_position().y)))
 
 def endGame():
@@ -76,7 +82,7 @@ def endGame():
     gameHasStarted = False
 
     global score
-    score = 0
+    score = 0 
 
     list_of_opps.clear()
 
