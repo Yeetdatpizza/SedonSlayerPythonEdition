@@ -5,9 +5,10 @@ Much like them platform
 """
 
 class Ruler:
-    def __init__(self, angle, position):
+    def __init__(self, angle, position, timeAlive):
         self.angle = angle
         self.position = position
+        self.timeAlive = timeAlive
 
     def getPosition(self):
         return self.position
@@ -17,3 +18,9 @@ class Ruler:
 
     def setPosition(self, position):
         self.position = position
+
+    def wither(self):
+        self.timeAlive -= 1
+
+    def getTimeAlive(self):
+        return self.timeAlive
