@@ -23,9 +23,9 @@ clock = pygame.time.Clock()
 running = True
 score = 0
 hasRuler = True
-rulerCooldown = 120 - (score * 2)
+rulerCooldown = 60 - (score * 2)
 
-rulerWhack = pygame.mixer.Sound("Audio\Whack.mp3")
+rulerWhack = pygame.mixer.Sound(r"Audio\Whack.mp3")
 
 pygame.mixer.music.load(r"Audio\MenuTheme.mp3")
 pygame.mixer.music.play(loops=-1)
@@ -82,7 +82,9 @@ def endGame():
     gameHasStarted = False
 
     global score
-    score = 0 
+    oldScore = score
+    score = 0
+
 
     list_of_opps.clear()
 
@@ -99,8 +101,13 @@ def endGame():
     subtitle_rect = subtitleCard.get_rect()
     subtitle_rect.center = (screen.get_width() // 2, int(screen.get_height() / 1.5))
 
+    scoreCard = font.render(f"Score: {oldScore}", True, (255, 212, 59), (0, 0, 0))
+    score_rect = scoreCard.get_rect()
+    score_rect.center = (screen.get_width() // 2, int(screen.get_height() / 1.2))
+
     screen.blit(titleCard, title_rect)
     screen.blit(subtitleCard, subtitle_rect)
+    screen.blit(scoreCard, score_rect)
 
 
 def updateKiggles(list_of_opps):
@@ -116,14 +123,14 @@ def updateKiggles(list_of_opps):
             return
 
         if distanceFromOppX >= 0:
-            opp.setPosition(Vector2(opp.getPosition()[0] - (1 * (((score + 1) / 20) + 1)), opp.getPosition()[1]))
+            opp.setPosition(Vector2(opp.getPosition()[0] - (1 * (((score + 1) / 10) + 1)), opp.getPosition()[1]))
         else:
-            opp.setPosition(Vector2(opp.getPosition()[0] + (1 * (((score + 1) / 20) + 1)), opp.getPosition()[1]))
+            opp.setPosition(Vector2(opp.getPosition()[0] + (1 * (((score + 1) / 10) + 1)), opp.getPosition()[1]))
 
         if distanceFromOppY >= 0:
-            opp.setPosition(Vector2(opp.getPosition()[0], opp.getPosition()[1] - (1 * (((score + 1) / 20) + 1))))
+            opp.setPosition(Vector2(opp.getPosition()[0], opp.getPosition()[1] - (1 * (((score + 1) / 10) + 1))))
         else:
-            opp.setPosition(Vector2(opp.getPosition()[0], opp.getPosition()[1] + (1 * (((score + 1) / 20) + 1))))
+            opp.setPosition(Vector2(opp.getPosition()[0], opp.getPosition()[1] + (1 * (((score + 1) / 10) + 1))))
 
         screen.blit(kiggleImage, (opp.getPosition()[0], opp.getPosition()[1]))
 
@@ -167,18 +174,18 @@ def update_sedon(hasRuler):
 
     if keys[pygame.K_a]:
         for platform in list_of_platforms:
-            platform.setPosition([platform.getPosition().x + 4, platform.getPosition().y])
+            platform.setPosition([platform.getPosition().x + 20, platform.getPosition().y])
         for opp in list_of_opps:
-            opp.setPosition([opp.getPosition()[0] + 4, opp.getPosition()[1]])
+            opp.setPosition([opp.getPosition()[0] + 20, opp.getPosition()[1]])
         for ruler in list_of_rulers:
-            ruler.setPosition([ruler.getPosition()[0] + 4, ruler.getPosition()[1]])
+            ruler.setPosition([ruler.getPosition()[0] + 20, ruler.getPosition()[1]])
     if keys[pygame.K_d]:
         for platform in list_of_platforms:
-            platform.setPosition([platform.getPosition().x - 4, platform.getPosition().y])
+            platform.setPosition([platform.getPosition().x - 20, platform.getPosition().y])
         for opp in list_of_opps:
-            opp.setPosition([opp.getPosition()[0] - 4, opp.getPosition()[1]])
+            opp.setPosition([opp.getPosition()[0] - 20, opp.getPosition()[1]])
         for ruler in list_of_rulers:
-            ruler.setPosition([ruler.getPosition()[0] - 4, ruler.getPosition()[1]])
+            ruler.setPosition([ruler.getPosition()[0] - 20, ruler.getPosition()[1]])
 
     if sedon.get_force() != 15:
         sedon.update_position_y(sedon.get_force())
@@ -211,13 +218,18 @@ def update_frame(gameHasStarted):
 
         update_sedon(hasRuler)
 
-        if random.randint(1, math.floor(180  /  (1 + (score / 20)))) == 1:
+        if random.randint(1, math.floor(90  /  (1 + (score / 20)))) == 1:
             spawn_Kiggle()
         for platform in list_of_platforms:
             pygame.draw.rect(screen, (63, 155, 11), platform.getBoundingBox())
 
         for ruler in list_of_rulers:
+            ruler.wither()
+            print(ruler.getTimeAlive())
+            if ruler.getTimeAlive() < 0:
+                list_of_rulers.remove(ruler)
 
+                continue
             for opp in list_of_opps:
                 if abs((opp.getPosition()[0] + (opp.getImage().get_width() / 2)) - ruler.getPosition()[0]) < 75 and abs((opp.getPosition()[1] + (opp.getImage().get_height() / 2)) - ruler.getPosition()[1]) < 75:
                     list_of_opps.remove(opp)
@@ -231,7 +243,7 @@ def update_frame(gameHasStarted):
             ruler_box = ruler_rotated.get_rect(center=(ruler.getPosition()[0],ruler.getPosition()[1]))
             screen.blit(ruler_rotated, ruler_box)
 
-            ruler.setPosition(Vector2(ruler.getPosition()[0] - (math.cos(ruler.getAngle()) * 10), ruler.getPosition()[1] + (math.sin(ruler.getAngle()) * 10)))
+            ruler.setPosition(Vector2(ruler.getPosition()[0] - (math.cos(ruler.getAngle()) * 30), ruler.getPosition()[1] + (math.sin(ruler.getAngle()) * 30)))
 
         updateKiggles(list_of_opps)
 
@@ -263,19 +275,19 @@ while running:
 
                     hasRuler = False
 
-                    if score * 2 > 80:
-                        subtractionValue = 80
+                    if score * 2 > 40:
+                        subtractionValue = 40
                     else:
                         subtractionValue = score * 2
 
-                    rulerCooldown = 120 - subtractionValue
+                    rulerCooldown = 60 - subtractionValue
 
                     ruler_image = pygame.image.load(r"Images\SedonRuler.png").convert_alpha()
                     sedon_image = pygame.image.load(r"Images\MrSedon.png").convert_alpha()
                     ruler_rotated = pygame.transform.rotate(ruler_image, ruler_angle * 180 / math.pi)
                     ruler_box = ruler_rotated.get_rect(center=(sedon.get_position()[0] + sedon_image.get_width() / 2,sedon.get_position()[1] + sedon_image.get_height() / 1.5))
 
-                    newRuler = Ruler(ruler_angle, Vector2(ruler_box.center[0], ruler_box.center[1]))
+                    newRuler = Ruler(ruler_angle, Vector2(ruler_box.center[0], ruler_box.center[1]), 120)
                     list_of_rulers.append(newRuler)
 
             if event.key == pygame.K_ESCAPE:
@@ -291,6 +303,6 @@ while running:
     if gameHasStarted and rulerCooldown <= 0:
         hasRuler = True
 
-    clock.tick(60)
+    clock.tick(120)
 
 pygame.quit()
